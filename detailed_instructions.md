@@ -369,3 +369,113 @@ Hands-on practice is essential, but **understanding theory makes your work robus
 ---
 
 > 🚀 **Summary:** This project simulates a real-world workflow — schema design, data cleaning/loading, querying, and visualization. Expanding it opens doors to advanced SQL, data analysis, visualization, and full-stack development.
+
+---
+
+Ah! I see — you want the **full text with the explanations and tips** included, not just the code snippets. Let me combine everything into one cohesive section for your `instructions.md`, with text **plus SQL and Python snippets**. Here’s the complete version:
+
+---
+
+# Excursus – 📊 Optional Visualizations
+
+Once your database is seeded, you can create **simple visualizations** to explore MCU data visually. This is entirely optional but makes the data more intuitive and portfolio-ready.
+
+### 1️⃣ Phase Distribution
+
+* **Goal:** Count the number of productions per MCU phase.
+* **Why:** A bar chart shows which phases had the most movies or series.
+
+**SQL Query:**
+
+```sql
+SELECT mcu_phase, COUNT(*) AS count
+FROM Productions
+WHERE mcu_phase IS NOT NULL
+GROUP BY mcu_phase
+ORDER BY mcu_phase;
+```
+
+**Python (Matplotlib):**
+
+```python
+import sqlite3
+import matplotlib.pyplot as plt
+
+conn = sqlite3.connect("marvel.db")
+cur = conn.cursor()
+
+cur.execute("""
+    SELECT mcu_phase, COUNT(*) 
+    FROM Productions 
+    WHERE mcu_phase IS NOT NULL
+    GROUP BY mcu_phase
+    ORDER BY mcu_phase
+""")
+data = cur.fetchall()
+conn.close()
+
+phases, counts = zip(*data)
+
+plt.bar(phases, counts, color='crimson')
+plt.xlabel("MCU Phase")
+plt.ylabel("Number of Productions")
+plt.title("Productions per MCU Phase")
+plt.show()
+```
+
+---
+
+### 2️⃣ MCU Timeline Overview
+
+* **Goal:** Plot productions along the MCU timeline using `timeline_start` and `timeline_end`.
+* **Tip:** Exclude extreme outliers (e.g., pre-1940 productions) to focus on the main MCU storyline.
+
+**SQL Query (Excluding Outliers):**
+
+```sql
+SELECT title, timeline_start, timeline_end
+FROM Productions
+WHERE timeline_start >= 1940;  -- adjust cutoff as needed
+```
+
+**Python (Matplotlib):**
+
+```python
+import sqlite3
+import matplotlib.pyplot as plt
+
+conn = sqlite3.connect("marvel.db")
+cur = conn.cursor()
+
+cur.execute("""
+    SELECT title, timeline_start, timeline_end 
+    FROM Productions 
+    WHERE timeline_start >= 1940
+""")
+data = cur.fetchall()
+conn.close()
+
+if data:
+    titles, starts, ends = zip(*data)
+
+    plt.figure(figsize=(10,6))
+    plt.scatter(starts, ends, color='navy')
+    plt.xlabel("Timeline Start Year")
+    plt.ylabel("Timeline End Year")
+    plt.title("MCU Timeline Overview (Excluding Outliers)")
+    plt.show()
+else:
+    print("No data available after filtering out outliers.")
+```
+
+---
+
+### 3️⃣ Tools & Methods
+
+* Python scripts with **Matplotlib** or **Pandas** for small charts.
+* Export CSV from SQLite (`.mode csv` + `.output file.csv`) and plot in **Excel/Google Sheets** if preferred.
+
+💡 **Tips:**
+
+* Color-code points by **MCU phase** or production type (Movie, Series, One-Shot, Adjacent) to make charts more informative.
+* Small visualizations like these provide immediate insight into timelines, phase distributions, and production patterns — perfect for analysis and portfolio demos.
