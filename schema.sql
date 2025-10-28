@@ -36,3 +36,11 @@ CREATE TABLE Appearances (
     FOREIGN KEY (production_id) REFERENCES Productions(id) ON DELETE CASCADE,
     FOREIGN KEY (character_id) REFERENCES Characters(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS Phases (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    start_year INTEGER,
+    end_year INTEGER,
+    description TEXT
+);
